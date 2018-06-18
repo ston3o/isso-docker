@@ -20,7 +20,7 @@ build-release:
     - docker build --pull -t "isso:testing" .
     - ls tests/*.sh | parallel --joblog /tmp/joblog
     - tools/tagging.sh "$CI_REGISTRY_IMAGE" "${ISSO_VERSION:-latest}" ""
-    - docker images "${DOCKER_REPO_PREFIX}/${DOCKER_REPO_NAME}
+    - docker images "$CI_REGISTRY_IMAGE"
     - docker images --format "{{.Repository}}:{{.Tag}}" "$CI_REGISTRY_IMAGE" | xargs -L 1 docker push
   only:
     - master
