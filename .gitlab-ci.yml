@@ -1,0 +1,46 @@
+image: quay.io/sheogorath/ubuntu-ci:18.04
+
+services:
+  - docker:dind
+
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  - apt-get update
+  - apt-get install -y openssl parallel jq wget
+
+build-release:
+  stage: build
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    SRI_SHA512: "bx2JCw5L5PIO0b6ek3HohFx3TsNuZsvCwuQKiwqoEqlmg9vDvlBVMzNvcmx3YEZniVXkf7z+uWnb5snZRE4Ong=="
+    SRI_SHA384: "goNhuMdeesV5qJG7lmCG6dMGLYdw43Cne8Yo+OrVFcqVQ5HubiYMXitWbfU3+P5O"
+    SRI_SHA256: "0wJ+yOaVEU4mV/5wHA+cnxymViCDcVTz5IRO0MhxSxw="
+    ISSO_VERSION: "0.10.6"
+  script:
+    - docker build --pull -t "isso:testing" .
+    - ls tests/*.sh | parallel --joblog /tmp/joblog
+    - tools/tagging.sh "$CI_REGISTRY_IMAGE" "${ISSO_VERSION:-latest}" ""
+    - docker images "${DOCKER_REPO_PREFIX}/${DOCKER_REPO_NAME}
+    - docker images --format "{{.Repository}}:{{.Tag}}" "$CI_REGISTRY_IMAGE" | xargs -L 1 docker push
+  only:
+    - master
+  tags:
+    - docker
+
+build:
+  stage: build
+  variables:
+    DOCKER_HOST: "tcp://docker:2375"
+    SRI_SHA512: "bx2JCw5L5PIO0b6ek3HohFx3TsNuZsvCwuQKiwqoEqlmg9vDvlBVMzNvcmx3YEZniVXkf7z+uWnb5snZRE4Ong=="
+    SRI_SHA384: "goNhuMdeesV5qJG7lmCG6dMGLYdw43Cne8Yo+OrVFcqVQ5HubiYMXitWbfU3+P5O"
+    SRI_SHA256: "0wJ+yOaVEU4mV/5wHA+cnxymViCDcVTz5IRO0MhxSxw="
+    ISSO_VERSION: "0.10.6"
+  script:
+    - docker build --pull -t "isso:testing" .
+    - ls tests/*.sh | parallel --joblog /tmp/joblog
+    - docker tag isso:testing "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  except:
+    - master
+  tags:
+    - docker

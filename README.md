@@ -15,7 +15,7 @@ Python and JavaScript. It aims to be a drop-in replacement for
 First, a simple run command:
 
 ```console
-$ docker run --name isso -p 8080:80 sheogorath/isso-docker
+$ docker run --name isso -p 8080:80 quay.io/sheogorath/isso
 ```
 
 This will run an instance of isso with default settings but also won't persist anything.
@@ -23,7 +23,7 @@ This will run an instance of isso with default settings but also won't persist a
 To perist data and make isso accessable use:
 
 ```console
-$ docker run --name isso -p 8080:80 -v `pwd`/data:/data sheogorath/isso-docker
+$ docker run --name isso -p 8080:80 -v `pwd`/data:/data quay.io/sheogorath/isso
 ```
 
 *Please notice that isso doesn't provide any webinterface. So be aware of the fact that http://127.0.0.1:8080 will result in an empty/error page*
@@ -48,7 +48,7 @@ The configuration is done by environment variables. The container won't crash if
 As there are currently no additional parameters, simply use the following statement:
 
 ```console
-$ git clone https://github.com/SISheogorath/isso-docker.git
+$ git clone https://octo.sh/docker-library/isso-docker.git
 $ docker build -t isso:local isso-docker
 ```
 
@@ -66,7 +66,7 @@ Please see [the Docker installation documentation](https://docs.docker.com/insta
 
 ## Issues
 
-If you have any problems with or questions about this image, please contact us through a [GitHub issue](https://github.com/SISheogorath/isso-docker/issues).
+If you have any problems with or questions about this image, please contact us through a [GitLab issue](https://octo.sh/docker-library/isso-docker/issues).
 
 ## Contributing
 
