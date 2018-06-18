@@ -17,12 +17,12 @@ PORT=$(cat /dev/urandom|od -N2 -An -i|awk -v f=10000 -v r=19999 '{printf "%i\n",
 [ $(netstat -an | grep LISTEN | grep :${PORT} | wc -l) -eq 0 ] || { ./$0 && exit 0 || exit 1; }
 
 # Run container in a simple way
-DOCKERCONTAINER=$(docker run -d -p 127.0.0.1:${PORT}:80 isso:testing run)
+DOCKERCONTAINER=$(docker run -d -p ${PORT}:80 isso:testing run)
 sleep 5
 
 docker logs ${DOCKERCONTAINER}
 
-wget -O- http://127.0.0.1:${PORT}/js/embed.min.js
+wget -O- http://docker:${PORT}/js/embed.min.js
 
 # Make sure the container is not restarting
 sleep 20
@@ -32,4 +32,3 @@ docker ps -f id=${DOCKERCONTAINER}
 
 # Clean up
 docker stop ${DOCKERCONTAINER} && docker rm ${DOCKERCONTAINER}
-
