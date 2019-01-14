@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-RUN apk add --no-cache --virtual .build-utils gcc musl-dev && \
+RUN apk add --no-cache --virtual .build-utils gcc musl-dev libffi-dev && \
     pip install isso && mkdir /data && \
     apk del .build-utils
 
